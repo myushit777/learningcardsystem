@@ -2,10 +2,12 @@ package gruppe1.learningcardsystem.controller;
 
 import gruppe1.learningcardsystem.controller.requests.CardsetRequest;
 import gruppe1.learningcardsystem.controller.requests.LearningcardRequest;
+import gruppe1.learningcardsystem.controller.requests.NumbercardRequest;
 import gruppe1.learningcardsystem.controller.responses.Cardset;
 import gruppe1.learningcardsystem.controller.responses.Learningcard;
+import gruppe1.learningcardsystem.controller.responses.Numbercard;
 import gruppe1.learningcardsystem.services.CardSetService;
-import gruppe1.learningcardsystem.services.LearningcardService;
+import gruppe1.learningcardsystem.services.CardService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,11 +16,11 @@ import java.util.List;
 public class CardsetController {
 
     private final CardSetService cardSetService;
-    private final LearningcardService learningcardService;
+    private final CardService cardService;
 
-    public CardsetController(CardSetService cardSetService, LearningcardService learningcardService) {
+    public CardsetController(CardSetService cardSetService, CardService cardService) {
         this.cardSetService = cardSetService;
-        this.learningcardService = learningcardService;
+        this.cardService = cardService;
     }
 
 
@@ -47,7 +49,7 @@ public class CardsetController {
     public Cardset addLearningcardToCardset(@PathVariable("setId") Long setId, @RequestBody LearningcardRequest request) {
         //Cardset per id suchen
         Cardset cardset = cardSetService.getCardsetById(setId);
-        Learningcard learningcard = learningcardService.createLearningCard(
+        Learningcard learningcard = cardService.createLearningCard(
                 request.getQuestion()
         );
 
@@ -55,6 +57,22 @@ public class CardsetController {
             // learningcard zu cardset hinzufügen
             cardset.addCard(learningcard.getId(), learningcard);
            cardSetService.updateCardset(cardset);
+        }
+       return cardset;
+    }
+
+    @PostMapping("/cardsets/{setId}/addNumber")
+    public Cardset addLearningcardToCardset(@PathVariable("setId") Long setId, @RequestBody NumbercardRequest request) {
+        //Cardset per id suchen
+        Cardset cardset = cardSetService.getCardsetById(setId);
+        Numbercard number = (Numbercard)cardService.createLearningCard(
+                request.getQuestion()
+        );
+
+        if (cardset != null) {
+            // learningcard zu cardset hinzufügen
+            cardset.addCard(number.getId(), number);
+            cardSetService.updateCardset(cardset);
         }
         return cardset;
     }

@@ -1,11 +1,12 @@
 package gruppe1.learningcardsystem.services;
 
 import gruppe1.learningcardsystem.controller.responses.Learningcard;
+import gruppe1.learningcardsystem.controller.responses.Numbercard;
 import org.springframework.stereotype.Component;
 import java.util.HashMap;
 
 @Component
-public class LearningcardService {
+public class CardService {
 
     private final HashMap<Long, Learningcard> learningCards = new HashMap<>();
     private Long nextId = 1L;
