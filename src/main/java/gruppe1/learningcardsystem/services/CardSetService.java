@@ -12,11 +12,12 @@ public class CardSetService {
 
     //Alle Cardsets werden in einer Map gespeichert
     private HashMap<Long, Cardset> cardsets = new HashMap<>();
+    private Long nextId = 1l;
 
     //Erstelle ein Cardset
-    public Cardset createCardset(Long id, String name){
-        Cardset cardset = new Cardset(id,name);
-        cardsets.put(id,cardset);
+    public Cardset createCardset(String name){
+        Cardset cardset = new Cardset(nextId++,name);
+        cardsets.put(cardset.getId(), cardset);
         return cardset;
     }
 
@@ -30,5 +31,14 @@ public class CardSetService {
                 .map((x) -> x.getValue())
                 .collect(Collectors.toList());
         return collect;
+    }
+
+    public Cardset updateCardset(Cardset updatedCardset) {
+        Long setId = updatedCardset.getId();
+
+        if (cardsets.containsKey(setId)) {
+            // Aktualisieren Sie das Cardset mit den neuen Daten
+            cardsets.put(setId, updatedCardset);
+        } return updatedCardset;
     }
 }

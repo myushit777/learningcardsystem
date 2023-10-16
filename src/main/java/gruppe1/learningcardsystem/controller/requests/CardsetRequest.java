@@ -11,16 +11,13 @@ public class CardsetRequest {
 
     @JsonProperty("id")
     private long id;
-    @JsonProperty("name")
+
     private String name;
-    @JsonProperty("cards")
+
     private HashMap<Long, Learningcard> cards;
 
     public CardsetRequest() {
 
     }
 
-    public void addCard(Long id, Learningcard learningcard){
-        cards.put(id, learningcard);
-    }
 }

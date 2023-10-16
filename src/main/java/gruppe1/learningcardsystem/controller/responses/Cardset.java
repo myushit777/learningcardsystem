@@ -26,4 +26,6 @@ public class Cardset {
     public void addCard(Long id, Learningcard learningcard){
         cards.put(id, learningcard);
     }
+
+    public void removeCard(Long id){ cards.remove(id);}
 }
