@@ -5,7 +5,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class Card {
+public abstract class Card {
     private Long id;
     private Integer successCount = 0;
     private LocalDateTime creationDate = LocalDateTime.now();

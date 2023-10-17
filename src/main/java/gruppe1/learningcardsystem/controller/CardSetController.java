@@ -1,10 +1,11 @@
 package gruppe1.learningcardsystem.controller;
 
-import gruppe1.learningcardsystem.controller.responses.Card;
+import gruppe1.learningcardsystem.controller.requests.CardRequest;
+import gruppe1.learningcardsystem.controller.responses.*;
+import gruppe1.learningcardsystem.services.CardService;
 import gruppe1.learningcardsystem.services.CardSetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import gruppe1.learningcardsystem.controller.responses.CardSet;
 import gruppe1.learningcardsystem.controller.requests.CardsetRequest;
 
 import java.util.List;
@@ -14,8 +15,14 @@ import java.util.Optional;
 @RequestMapping("/cardsets")
 public class CardSetController {
 
-    @Autowired
     private CardSetService cardSetService;
+    private CardService cardService;
+
+    @Autowired
+    public CardSetController(CardSetService cardSetService, CardService cardService){
+        this.cardSetService = cardSetService;
+        this.cardService = cardService;
+    }
 
     @GetMapping
     public List<CardSet> getAllCardsets() {
@@ -41,7 +48,7 @@ public class CardSetController {
         if (existingCardset.isPresent()) {
             CardSet updatedCardSet = existingCardset.get();
             updatedCardSet.setName(cardsetRequest.getName());
-            // Aktualisiere andere Eigenschaften nach Bedarf.
+
 
             return cardSetService.updateCardSet(id, updatedCardSet);
         }
@@ -53,8 +60,38 @@ public class CardSetController {
         cardSetService.deleteCardSet(id);
     }
 
-/*    @PostMapping("/{cardSetId}/addCards")
-    public void addCardsToCardSet(@PathVariable Long cardSetId, @RequestBody Card card) {
-        cardSetService.addCardToCardSet(cardSetId, card);
-    }*/
+
+    @PostMapping("/{cardSetId}/addNumber")
+    public NumberCard addNumbercardToCardSet(@PathVariable Long cardSetId, @RequestBody CardRequest cardRequest) {
+        NumberCard numberCard = new NumberCard<>();
+        numberCard.setQuestion(cardRequest.getQuestion());
+        numberCard.setAnswer(Double.parseDouble(cardRequest.getAnswer())); // Annahme: Antwort ist eine Dezimalzahl.
+        cardService.createCard(numberCard);
+        cardSetService.addCardToCardSet(cardSetId,numberCard);
+
+        return numberCard;
+    }
+
+    @PostMapping("/{cardSetId}/addText")
+    public TextCard addTextcardToCardSet(@PathVariable Long cardSetId, @RequestBody CardRequest cardRequest) {
+        TextCard textCard = new TextCard();
+        textCard.setQuestion(cardRequest.getQuestion());
+        textCard.setAnswer(cardRequest.getAnswer()); // Die Antwort ist ein Text.
+        cardService.createCard(textCard);
+        cardSetService.addCardToCardSet(cardSetId, textCard);
+
+        return textCard;
+    }
+
+    @PostMapping("/{cardSetId}/addMultipleChoice")
+    public MultipleChoiceCard addMultiplechoicecardToCardSet(@PathVariable Long cardSetId, @RequestBody CardRequest cardRequest) {
+        MultipleChoiceCard multipleChoiceCard = new MultipleChoiceCard();
+        multipleChoiceCard.setQuestion(cardRequest.getQuestion());
+        multipleChoiceCard.setAnswer(cardRequest.getChoices());
+        multipleChoiceCard.setAnswerCorrect(cardRequest.getAnswerCorrect());
+        cardService.createCard(multipleChoiceCard);
+        cardSetService.addCardToCardSet(cardSetId,multipleChoiceCard);
+
+        return multipleChoiceCard;
+    }
 }

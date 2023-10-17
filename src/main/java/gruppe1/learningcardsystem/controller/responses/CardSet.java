@@ -2,29 +2,25 @@ package gruppe1.learningcardsystem.controller.responses;
 
 import lombok.Data;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class CardSet {
 
+    private static long nextCardId = 1;
     private long id;
-
     private String name;
-    private HashSet<Card> cards;
+    private List<Card> cards = new ArrayList<>();
 
     public CardSet(){
 
     }
 
-    public CardSet(Long id, String name) {
-        this.id = id;
-        this.name = name;
-        this.cards = new HashSet<>(); {
-        };
-    }
 
     public void addCard(Card card){
-        this.cards.add(card);
+        card.setId(nextCardId++);
+        cards.add(card);
     }
 
 }

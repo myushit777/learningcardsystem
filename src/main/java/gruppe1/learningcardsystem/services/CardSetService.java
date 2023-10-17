@@ -41,25 +41,12 @@ public class CardSetService {
         cardSetMap.remove(id);
     }
 
-
-
-/*    public void addCardToCardSet(Long cardSetId, Card card) {
+    public void addCardToCardSet(Long cardSetId, Card card) {
         Optional<CardSet> cardSetOptional = getCardSetById(cardSetId);
         if (cardSetOptional.isPresent()) {
             CardSet cardSet = cardSetOptional.get();
-
-            // Unterscheide den Kartentyp und führe die entsprechende Operation aus
-            if (card instanceof TextCard) {
-                cardSet.addTextCard((TextCard) card);
-            } else if (card instanceof NumberCard) {
-                cardSet.addNumberCard((NumberCard) card);
-            } else if (card instanceof MultiChoiceCard) {
-                cardSet.addMultiChoiceCard((MultiChoiceCard) card);
-            }
-            // Füge hier weitere Kartentypen hinzu, falls erforderlich.
-
-            // Speichere das aktualisierte CardSet zurück in der Map
-            cardSetMap.put(cardSet.getId(), cardSet);
+            cardSet.addCard(card);
         }
-    }*/
+    }
+
 }

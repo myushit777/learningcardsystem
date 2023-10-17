@@ -10,7 +10,6 @@ import java.util.Optional;
 public class CardService {
 
     private final List<Card> cards = new ArrayList<>();
-    private long nextCardId = 1;
 
     public List<Card> getAllCards() {
         return cards;
@@ -21,7 +20,6 @@ public class CardService {
     }
 
     public Card createCard(Card card) {
-        card.setId(nextCardId++);
         cards.add(card);
         return card;
     }
