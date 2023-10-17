@@ -5,7 +5,7 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class MultiChoiceCard extends Learningcard {
+public class MultiChoiceCard extends Card {
     private String[] answer;
     private boolean[] answerCorrect;
 

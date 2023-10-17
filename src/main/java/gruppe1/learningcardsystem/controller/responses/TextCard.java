@@ -5,15 +5,19 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class Textcard extends Learningcard{
+public class TextCard extends Card {
 
     private String answer;
 
-    public Textcard(String answer) {
+    public TextCard(){
+
+    }
+
+    public TextCard(String answer) {
         this.answer = answer;
     }
 
-    public Textcard(Long id, Integer successCount, LocalDateTime creationDate, LocalDateTime nextDueDate, boolean isDraft, String question, String answer) {
+    public TextCard(Long id, Integer successCount, LocalDateTime creationDate, LocalDateTime nextDueDate, boolean isDraft, String question, String answer) {
         super(id, successCount, creationDate, nextDueDate, isDraft, question);
         this.answer = answer;
     }

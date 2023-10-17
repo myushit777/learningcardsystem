@@ -5,19 +5,19 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-public class Learningcard {
+public class Card {
     private Long id;
-    private Integer successCount =0;
+    private Integer successCount = 0;
     private LocalDateTime creationDate = LocalDateTime.now();
     private LocalDateTime nextDueDate = LocalDateTime.now();
     private boolean isDraft = false;
     private String question;
 
-    public Learningcard(){
+    public Card(){
 
     }
 
-    public Learningcard(Long id, Integer successCount, LocalDateTime creationDate, LocalDateTime nextDueDate, boolean isDraft, String question) {
+    public Card(Long id, Integer successCount, LocalDateTime creationDate, LocalDateTime nextDueDate, boolean isDraft, String question) {
         this.id = id;
         this.successCount = successCount;
         this.creationDate = creationDate;

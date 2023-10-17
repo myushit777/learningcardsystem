@@ -1,39 +1,43 @@
 package gruppe1.learningcardsystem.services;
 
-import gruppe1.learningcardsystem.controller.responses.Learningcard;
-import gruppe1.learningcardsystem.controller.responses.Numbercard;
-import org.springframework.stereotype.Component;
-import java.util.HashMap;
+import gruppe1.learningcardsystem.controller.responses.Card;
+import org.springframework.stereotype.Service;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
-@Component
+@Service
 public class CardService {
 
-    private final HashMap<Long, Learningcard> learningCards = new HashMap<>();
-    private Long nextId = 1L;
+    private final List<Card> cards = new ArrayList<>();
+    private long nextCardId = 1;
 
-    public Learningcard createLearningCard(String question) {
-        Learningcard learningcard = new Learningcard();
-        learningcard.setId(nextId++);
-        learningcard.setQuestion(question);
-        learningCards.put(learningcard.getId(), learningcard);
-        return learningcard;
+    public List<Card> getAllCards() {
+        return cards;
     }
 
-    public Learningcard getLearningCardById(Long id) {
-        return learningCards.get(id);
+    public Optional<Card> getCardById(Long id) {
+        return cards.stream().filter(card -> card.getId().equals(id)).findFirst();
     }
 
-    public Learningcard updateLearningCard(Long id, String question, boolean isDraft) {
-        Learningcard existingLearningCard = learningCards.get(id);
-        if (existingLearningCard != null) {
-            existingLearningCard.setQuestion(question);
-            existingLearningCard.setDraft(isDraft);
-
-        } return existingLearningCard;
+    public Card createCard(Card card) {
+        card.setId(nextCardId++);
+        cards.add(card);
+        return card;
     }
 
-    public void deleteLearningCard(Long id) {
-        learningCards.remove(id);
+    public Optional<Card> updateCard(Long id, Card updatedCard) {
+        Optional<Card> existingCard = getCardById(id);
+        if (existingCard.isPresent()) {
+            cards.remove(existingCard.get());
+            updatedCard.setId(id);
+            cards.add(updatedCard);
+            return Optional.of(updatedCard);
+        }
+        return Optional.empty();
+    }
+
+    public void deleteCard(Long id) {
+        cards.removeIf(card -> card.getId().equals(id));
     }
 }
-
