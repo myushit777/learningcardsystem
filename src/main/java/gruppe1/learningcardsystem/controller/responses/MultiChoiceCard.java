@@ -9,6 +9,10 @@ public class MultiChoiceCard extends Card {
     private String[] answer;
     private boolean[] answerCorrect;
 
+    public MultiChoiceCard(){
+
+    }
+
     public MultiChoiceCard(
             Long id,
             Integer successCount,

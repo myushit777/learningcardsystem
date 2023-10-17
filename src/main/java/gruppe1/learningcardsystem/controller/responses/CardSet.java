@@ -8,19 +8,25 @@ import java.util.List;
 @Data
 public class CardSet {
 
-    private static long nextCardId = 1;
     private long id;
     private String name;
-    private List<Card> cards = new ArrayList<>();
+    private List<Card> cards;
+    private long numberOfCards = 0;
 
     public CardSet(){
-
+    this.id = id;
+    this.name = name;
+    this.cards = new ArrayList<>();
     }
 
 
     public void addCard(Card card){
-        card.setId(nextCardId++);
+        numberOfCards++;
+        card.setId(numberOfCards);
         cards.add(card);
     }
 
+    public void deleteCard(Long cardId) {
+        cards.remove(cardId.intValue());
+    }
 }

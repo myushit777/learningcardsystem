@@ -1,41 +1,36 @@
 package gruppe1.learningcardsystem.services;
 
 import gruppe1.learningcardsystem.controller.responses.Card;
+import gruppe1.learningcardsystem.controller.responses.CardSet;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.List;
+
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
 public class CardService {
 
-    private final List<Card> cards = new ArrayList<>();
-
-    public List<Card> getAllCards() {
-        return cards;
-    }
-
-    public Optional<Card> getCardById(Long id) {
-        return cards.stream().filter(card -> card.getId().equals(id)).findFirst();
-    }
-
-    public Card createCard(Card card) {
-        cards.add(card);
+    public Card addCardToCardSet(CardSet cardSet, Card card){
+        cardSet.addCard(card);
         return card;
     }
 
-    public Optional<Card> updateCard(Long id, Card updatedCard) {
-        Optional<Card> existingCard = getCardById(id);
-        if (existingCard.isPresent()) {
-            cards.remove(existingCard.get());
-            updatedCard.setId(id);
-            cards.add(updatedCard);
-            return Optional.of(updatedCard);
-        }
-        return Optional.empty();
+    public void deleteCardFromCardSet(CardSet cardSet, Long cardId){
+        cardSet.deleteCard(cardId);
     }
 
-    public void deleteCard(Long id) {
-        cards.removeIf(card -> card.getId().equals(id));
+    public Card updateCardInCardSet(CardSet cardSet, Card card) {
+        for (int i = 0; i < cardSet.getCards().size(); i++) {
+            if (Objects.equals(cardSet.getCards().get(i).getId(), card.getId())) {
+                cardSet.getCards().set(i, card);
+                return card;
+            }
+        } return null;
     }
+
+    public Card getCardFromCardSetByID(CardSet cardSet, Long id){
+        return cardSet.getCards().get(id.intValue());
+    }
+
+
 }

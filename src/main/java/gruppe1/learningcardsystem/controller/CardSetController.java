@@ -9,89 +9,153 @@ import org.springframework.web.bind.annotation.*;
 import gruppe1.learningcardsystem.controller.requests.CardsetRequest;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/cardsets")
 public class CardSetController {
 
     private CardSetService cardSetService;
+
     private CardService cardService;
 
     @Autowired
-    public CardSetController(CardSetService cardSetService, CardService cardService){
+    public CardSetController(CardSetService cardSetService, CardService cardService) {
         this.cardSetService = cardSetService;
         this.cardService = cardService;
     }
 
+    //ALLE CARDSETS
     @GetMapping
     public List<CardSet> getAllCardsets() {
-        return cardSetService.getAllCardSets();
+        return cardSetService.getCardSetList();
     }
 
+    //CARDSETS PER ID SUCHEN
     @GetMapping("/{id}")
-    public Optional<CardSet> getCardset(@PathVariable Long id) {
-        return cardSetService.getCardSetById(id);
+    public CardSet getCardSetbyId(@PathVariable Long id) {
+        return cardSetService.getCardSetbyId(id);
     }
 
+    //ADD CARDSET
     @PostMapping
-    public CardSet createCardset(@RequestBody CardsetRequest cardsetRequest) {
-        CardSet cardset = new CardSet();
-        cardset.setName(cardsetRequest.getName());
+    public CardSet addCardSet(@RequestBody CardsetRequest request) {
+        CardSet cardSet = new CardSet();
+        cardSet.setName(request.getName());
 
-        return cardSetService.createCardSet(cardset);
+        return cardSetService.createCardSet(cardSet);
     }
 
-    @PutMapping("/{id}")
-    public Optional<CardSet> updateCardset(@PathVariable Long id, @RequestBody CardsetRequest cardsetRequest) {
-        Optional<CardSet> existingCardset = cardSetService.getCardSetById(id);
-        if (existingCardset.isPresent()) {
-            CardSet updatedCardSet = existingCardset.get();
-            updatedCardSet.setName(cardsetRequest.getName());
-
-
-            return cardSetService.updateCardSet(id, updatedCardSet);
-        }
-        return Optional.empty();
-    }
-
-    @DeleteMapping("/{id}")
-    public void deleteCardset(@PathVariable Long id) {
-        cardSetService.deleteCardSet(id);
-    }
-
-
-    @PostMapping("/{cardSetId}/addNumber")
-    public NumberCard addNumbercardToCardSet(@PathVariable Long cardSetId, @RequestBody CardRequest cardRequest) {
+    //ADD NUMBERCARD DOUBLE TO CARDSET
+    @PostMapping("/{cardSetId}/addDouble")
+    public Card addDoubleCardToCardSet(@PathVariable Long cardSetId, @RequestBody CardRequest request) {
         NumberCard numberCard = new NumberCard<>();
-        numberCard.setQuestion(cardRequest.getQuestion());
-        numberCard.setAnswer(Double.parseDouble(cardRequest.getAnswer())); // Annahme: Antwort ist eine Dezimalzahl.
-        cardService.createCard(numberCard);
-        cardSetService.addCardToCardSet(cardSetId,numberCard);
-
+        numberCard.setQuestion(request.getQuestion());
+        numberCard.setAnswer(Double.parseDouble(request.getAnswer())); //DOUBLE
+        cardService.addCardToCardSet(cardSetService.getCardSetbyId(cardSetId), numberCard);
         return numberCard;
     }
 
-    @PostMapping("/{cardSetId}/addText")
-    public TextCard addTextcardToCardSet(@PathVariable Long cardSetId, @RequestBody CardRequest cardRequest) {
-        TextCard textCard = new TextCard();
-        textCard.setQuestion(cardRequest.getQuestion());
-        textCard.setAnswer(cardRequest.getAnswer()); // Die Antwort ist ein Text.
-        cardService.createCard(textCard);
-        cardSetService.addCardToCardSet(cardSetId, textCard);
+    //ADD NUMBERCARD INT TO CARDSET
+    @PostMapping("/{cardSetId}/addInt")
+    public Card addIntCardToCardSet(@PathVariable Long cardSetId, @RequestBody CardRequest request) {
+        NumberCard numberCard = new NumberCard<>();
+        numberCard.setQuestion(request.getQuestion());
+        numberCard.setAnswer(Integer.parseInt(request.getAnswer())); //INT
+        cardService.addCardToCardSet(cardSetService.getCardSetbyId(cardSetId), numberCard);
+        return numberCard;
+    }
 
+    //ADD NUMBERCARD LONG TO CARDSET
+    @PostMapping("/{cardSetId}/addLong")
+    public Card addLongCardToCardSet(@PathVariable Long cardSetId, @RequestBody CardRequest request) {
+        NumberCard numberCard = new NumberCard<>();
+        numberCard.setQuestion(request.getQuestion());
+        numberCard.setAnswer(Long.parseLong(request.getAnswer())); //LONG
+        cardService.addCardToCardSet(cardSetService.getCardSetbyId(cardSetId), numberCard);
+        return numberCard;
+    }
+
+    //ADD TEXTCARD STRING TO CARDSET
+    @PostMapping("/{cardSetId}/addT")
+    public Card addTextCardToCardSet(@PathVariable Long cardSetId, @RequestBody CardRequest request) {
+        TextCard textCard = new TextCard();
+        textCard.setQuestion(request.getQuestion());
+        textCard.setAnswer(request.getAnswer()); //Double sein Vater
+        cardService.addCardToCardSet(cardSetService.getCardSetbyId(cardSetId), textCard);
         return textCard;
     }
 
-    @PostMapping("/{cardSetId}/addMultipleChoice")
-    public MultipleChoiceCard addMultiplechoicecardToCardSet(@PathVariable Long cardSetId, @RequestBody CardRequest cardRequest) {
+    //ADD MULTIPLECHOICECARD TO CARDSET
+    @PostMapping("/{cardSetId}/addMultiple")
+    public Card addMutlipleChoiceCardToCardSet(@PathVariable Long cardSetId, @RequestBody CardRequest request) {
         MultipleChoiceCard multipleChoiceCard = new MultipleChoiceCard();
-        multipleChoiceCard.setQuestion(cardRequest.getQuestion());
-        multipleChoiceCard.setAnswer(cardRequest.getChoices());
-        multipleChoiceCard.setAnswerCorrect(cardRequest.getAnswerCorrect());
-        cardService.createCard(multipleChoiceCard);
-        cardSetService.addCardToCardSet(cardSetId,multipleChoiceCard);
-
+        multipleChoiceCard.setQuestion(request.getQuestion());
+        multipleChoiceCard.setAnswer(request.getChoices());
+        multipleChoiceCard.setAnswerCorrect(request.getAnswerCorrect());
+        cardService.addCardToCardSet(cardSetService.getCardSetbyId(cardSetId), multipleChoiceCard);
         return multipleChoiceCard;
+    }
+
+    //ADD MULTICARD TO CARDSET
+    @PostMapping("/{cardSetId}/addMulti")
+    public Card addMultiChoiceCardToCardSet(@PathVariable Long cardSetId, @RequestBody CardRequest request) {
+        MultiChoiceCard multiChoiceCard = new MultiChoiceCard();
+        multiChoiceCard.setQuestion(request.getQuestion());
+        multiChoiceCard.setAnswer(request.getChoices());
+        multiChoiceCard.setAnswerCorrect(request.getAnswerCorrect());
+        cardService.addCardToCardSet(cardSetService.getCardSetbyId(cardSetId), multiChoiceCard);
+
+        return multiChoiceCard;
+    }
+
+    //DELETE CARD FROM SET
+    @DeleteMapping("/{cardSetId}/{cardId}")
+    public void deleteCardFromCardSet(@PathVariable Long cardSetId, @PathVariable Long cardId) {
+        cardService.deleteCardFromCardSet(cardSetService.getCardSetbyId(cardSetId), --cardId);
+    }
+
+    //DELETE CARDSET
+    @DeleteMapping("/{id}")
+    public void deleteCardSet(@PathVariable Long id) {
+        cardSetService.deleteCardSet(id);
+    }
+
+    //UPDATE A CARDSET
+    @PutMapping("/{id}")
+    public CardSet updateCardSet(@PathVariable Long id, @RequestBody CardsetRequest request) {
+        CardSet existingCardSet = cardSetService.getCardSetbyId(id);
+        existingCardSet.setName(request.getName());
+        return cardSetService.updateCardSet(existingCardSet);
+    }
+
+/*    //UPDATE A CARD IN CARDSET
+    @PutMapping("/{cardSetId}/{cardId}")
+    public Card updateCardInCardSet(@PathVariable Long cardSetId, @PathVariable Long cardId, @RequestBody CardRequest request) {
+        CardSet cardSet = cardSetService.getCardSetbyId(cardSetId);
+        Card existingCard = cardService.getCardFromCardSetByID(cardSet, --cardId);
+        existingCard.setQuestion(request.getQuestion());
+        cardService.updateCardInCardSet(cardSet, existingCard);
+        return existingCard;
+    }*/
+
+    // Update a Card in a CardSet (generic method for all card types)
+    @PutMapping("/{cardSetId}/updateCard/{cardId}")
+    public Card updateCardYEAInCardSet(@PathVariable Long cardSetId, @PathVariable Long cardId, @RequestBody CardRequest request) {
+        CardSet cardSet = cardSetService.getCardSetbyId(cardSetId);
+            Card existingCard = cardService.getCardFromCardSetByID(cardSet, cardId);
+                existingCard.setQuestion(request.getQuestion());
+
+                if (existingCard instanceof NumberCard) {
+                    ((NumberCard<Number>) existingCard).setAnswer(Double.parseDouble(request.getAnswer()));
+                } else if (existingCard instanceof TextCard) {
+                    ((TextCard) existingCard).setAnswer(request.getAnswer());
+                } else if (existingCard instanceof MultipleChoiceCard) {
+                    // Handle multiple choice card fields
+                } else if (existingCard instanceof MultiChoiceCard) {
+                    // Handle multi-choice card fields
+                }
+                cardService.updateCardInCardSet(cardSet, existingCard);
+                return existingCard;
+
     }
 }
