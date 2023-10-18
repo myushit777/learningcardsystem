@@ -46,34 +46,34 @@ public class CardSetController {
     }
 
     //ADD NUMBERCARD DOUBLE TO CARDSET
-    @PostMapping("/{cardSetId}/addDouble")
+    @PostMapping("/{cardSetId}/addNumber")
     public Card addDoubleCardToCardSet(@PathVariable Long cardSetId, @RequestBody CardRequest request) {
         NumberCard numberCard = new NumberCard<>();
         numberCard.setQuestion(request.getQuestion());
-        numberCard.setAnswer(Double.parseDouble(request.getAnswer())); //DOUBLE
+        numberCard.setAnswer(cardSetService.parseValue(request.getAnswer()));
         cardService.addCardToCardSet(cardSetService.getCardSetbyId(cardSetId), numberCard);
         return numberCard;
     }
 
     //ADD NUMBERCARD INT TO CARDSET
-    @PostMapping("/{cardSetId}/addInt")
+/*    @PostMapping("/{cardSetId}/addInt")
     public Card addIntCardToCardSet(@PathVariable Long cardSetId, @RequestBody CardRequest request) {
         NumberCard numberCard = new NumberCard<>();
         numberCard.setQuestion(request.getQuestion());
         numberCard.setAnswer(Integer.parseInt(request.getAnswer())); //INT
         cardService.addCardToCardSet(cardSetService.getCardSetbyId(cardSetId), numberCard);
         return numberCard;
-    }
+    }*/
 
     //ADD NUMBERCARD LONG TO CARDSET
-    @PostMapping("/{cardSetId}/addLong")
+/*    @PostMapping("/{cardSetId}/addLong")
     public Card addLongCardToCardSet(@PathVariable Long cardSetId, @RequestBody CardRequest request) {
         NumberCard numberCard = new NumberCard<>();
         numberCard.setQuestion(request.getQuestion());
         numberCard.setAnswer(Long.parseLong(request.getAnswer())); //LONG
         cardService.addCardToCardSet(cardSetService.getCardSetbyId(cardSetId), numberCard);
         return numberCard;
-    }
+    }*/
 
     //ADD TEXTCARD STRING TO CARDSET
     @PostMapping("/{cardSetId}/addT")
@@ -139,23 +139,66 @@ public class CardSetController {
     }*/
 
     // Update a Card in a CardSet (generic method for all card types)
-    @PutMapping("/{cardSetId}/updateCard/{cardId}")
+    @PutMapping("/{cardSetId}/{cardId}")
     public Card updateCardYEAInCardSet(@PathVariable Long cardSetId, @PathVariable Long cardId, @RequestBody CardRequest request) {
         CardSet cardSet = cardSetService.getCardSetbyId(cardSetId);
-            Card existingCard = cardService.getCardFromCardSetByID(cardSet, cardId);
+        Card existingCard = cardService.getCardFromCardSetByID(cardSet, --cardId);
+        //existiert eine Card?
+        if (existingCard != null) {
+
+            /*
+            Hier wird gecheckt ob die request eine Frage beinhaltet denn NUR DANN wird die question geändert
+            sonst bleibt sie bestehen aber es können andere Elemente verändert werden basierend auf dem Kartentyp
+             */
+            if (request.getQuestion() != null) {
                 existingCard.setQuestion(request.getQuestion());
+            }
 
-                if (existingCard instanceof NumberCard) {
-                    ((NumberCard<Number>) existingCard).setAnswer(Double.parseDouble(request.getAnswer()));
-                } else if (existingCard instanceof TextCard) {
-                    ((TextCard) existingCard).setAnswer(request.getAnswer());
-                } else if (existingCard instanceof MultipleChoiceCard) {
-                    // Handle multiple choice card fields
-                } else if (existingCard instanceof MultiChoiceCard) {
-                    // Handle multi-choice card fields
+            //wenn TextCard
+            if (existingCard instanceof NumberCard) {
+                NumberCard<?> numberCard = (NumberCard<?>) existingCard;
+
+                //wenn in request mitgegeben
+                if (request.getAnswer() != null) {
+                    numberCard.setAnswer(cardSetService.parseValue(request.getAnswer()));
                 }
-                cardService.updateCardInCardSet(cardSet, existingCard);
-                return existingCard;
 
+                //wenn TextCard
+            } else if (existingCard instanceof TextCard) {
+
+                //wenn in request mitgegeben
+                if (request.getAnswer() != null) {
+                    ((TextCard) existingCard).setAnswer(request.getAnswer());
+                }
+
+                //wenn MultipleChoice
+            } else if (existingCard instanceof MultipleChoiceCard) {
+                MultipleChoiceCard multipleChoiceCard = (MultipleChoiceCard) existingCard;
+
+                //wenn in request mitgegeben
+                if (request.getChoices() != null) {
+                    multipleChoiceCard.setAnswer(request.getChoices());
+                }
+                if (request.getAnswerCorrect() != null) {
+                    multipleChoiceCard.setAnswerCorrect(request.getAnswerCorrect());
+                }
+
+                //wenn MultiChoicde
+            } else if (existingCard instanceof MultiChoiceCard) {
+                MultiChoiceCard multiChoiceCard = (MultiChoiceCard) existingCard;
+
+                //wenn in request mitgegeben
+                if (request.getChoices() != null) {
+                    multiChoiceCard.setAnswer(request.getChoices());
+                }
+                if (request.getAnswerCorrect() != null) {
+                    multiChoiceCard.setAnswerCorrect(request.getAnswerCorrect());
+                }
+            }
+
+            cardService.updateCardInCardSet(cardSet, existingCard);
+
+        }return existingCard;
     }
+
 }

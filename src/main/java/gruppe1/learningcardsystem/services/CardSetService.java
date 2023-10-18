@@ -37,4 +37,20 @@ public class CardSetService {
             }
         } return null;
     }
+
+    public  <T> T parseValue(String value) {
+        try {
+            if (value.contains(".")) {
+                return (T) (Double) Double.parseDouble(value);
+            } else {
+                if (value.length() <= 9) {
+                    return (T) (Integer) Integer.parseInt(value);
+                } else {
+                    return (T) (Long) Long.parseLong(value);
+                }
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid value format");
+        }
+}
 }
