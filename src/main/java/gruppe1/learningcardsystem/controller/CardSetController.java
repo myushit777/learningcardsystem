@@ -128,21 +128,12 @@ public class CardSetController {
         return cardSetService.updateCardSet(existingCardSet);
     }
 
-/*    //UPDATE A CARD IN CARDSET
-    @PutMapping("/{cardSetId}/{cardId}")
-    public Card updateCardInCardSet(@PathVariable Long cardSetId, @PathVariable Long cardId, @RequestBody CardRequest request) {
-        CardSet cardSet = cardSetService.getCardSetbyId(cardSetId);
-        Card existingCard = cardService.getCardFromCardSetByID(cardSet, --cardId);
-        existingCard.setQuestion(request.getQuestion());
-        cardService.updateCardInCardSet(cardSet, existingCard);
-        return existingCard;
-    }*/
-
     // Update a Card in a CardSet (generic method for all card types)
     @PutMapping("/{cardSetId}/{cardId}")
     public Card updateCardYEAInCardSet(@PathVariable Long cardSetId, @PathVariable Long cardId, @RequestBody CardRequest request) {
         CardSet cardSet = cardSetService.getCardSetbyId(cardSetId);
         Card existingCard = cardService.getCardFromCardSetByID(cardSet, --cardId);
+
         //existiert eine Card?
         if (existingCard != null) {
 
@@ -154,7 +145,7 @@ public class CardSetController {
                 existingCard.setQuestion(request.getQuestion());
             }
 
-            //wenn TextCard
+            //wenn NumberCard
             if (existingCard instanceof NumberCard) {
                 NumberCard<?> numberCard = (NumberCard<?>) existingCard;
 
@@ -198,7 +189,8 @@ public class CardSetController {
 
             cardService.updateCardInCardSet(cardSet, existingCard);
 
-        }return existingCard;
+        }
+        return existingCard;
     }
 
 }

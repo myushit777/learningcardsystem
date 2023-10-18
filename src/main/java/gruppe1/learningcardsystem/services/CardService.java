@@ -10,12 +10,12 @@ import java.util.Optional;
 @Service
 public class CardService {
 
-    public Card addCardToCardSet(CardSet cardSet, Card card){
+    public Card addCardToCardSet(CardSet cardSet, Card card) {
         cardSet.addCard(card);
         return card;
     }
 
-    public void deleteCardFromCardSet(CardSet cardSet, Long cardId){
+    public void deleteCardFromCardSet(CardSet cardSet, Long cardId) {
         cardSet.deleteCard(cardId);
     }
 
@@ -25,10 +25,11 @@ public class CardService {
                 cardSet.getCards().set(i, card);
                 return card;
             }
-        } return null;
+        }
+        return null;
     }
 
-    public Card getCardFromCardSetByID(CardSet cardSet, Long id){
+    public Card getCardFromCardSetByID(CardSet cardSet, Long id) {
         return cardSet.getCards().get(id.intValue());
     }
 
