@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import gruppe1.learningcardsystem.controller.requests.CardsetRequest;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -55,32 +56,13 @@ public class CardSetController {
         return numberCard;
     }
 
-    //ADD NUMBERCARD INT TO CARDSET
-/*    @PostMapping("/{cardSetId}/addInt")
-    public Card addIntCardToCardSet(@PathVariable Long cardSetId, @RequestBody CardRequest request) {
-        NumberCard numberCard = new NumberCard<>();
-        numberCard.setQuestion(request.getQuestion());
-        numberCard.setAnswer(Integer.parseInt(request.getAnswer())); //INT
-        cardService.addCardToCardSet(cardSetService.getCardSetbyId(cardSetId), numberCard);
-        return numberCard;
-    }*/
-
-    //ADD NUMBERCARD LONG TO CARDSET
-/*    @PostMapping("/{cardSetId}/addLong")
-    public Card addLongCardToCardSet(@PathVariable Long cardSetId, @RequestBody CardRequest request) {
-        NumberCard numberCard = new NumberCard<>();
-        numberCard.setQuestion(request.getQuestion());
-        numberCard.setAnswer(Long.parseLong(request.getAnswer())); //LONG
-        cardService.addCardToCardSet(cardSetService.getCardSetbyId(cardSetId), numberCard);
-        return numberCard;
-    }*/
-
     //ADD TEXTCARD STRING TO CARDSET
     @PostMapping("/{cardSetId}/addT")
     public Card addTextCardToCardSet(@PathVariable Long cardSetId, @RequestBody CardRequest request) {
         TextCard textCard = new TextCard();
         textCard.setQuestion(request.getQuestion());
         textCard.setAnswer(request.getAnswer()); //Double sein Vater
+        textCard.setDraft(false);
         cardService.addCardToCardSet(cardSetService.getCardSetbyId(cardSetId), textCard);
         return textCard;
     }
@@ -136,6 +118,8 @@ public class CardSetController {
 
         //existiert eine Card?
         if (existingCard != null) {
+            //bei Änderung wird dueDate aktualisiert
+            existingCard.setNextDueDate(LocalDateTime.now());
 
             /*
             Hier wird gecheckt ob die request eine Frage beinhaltet denn NUR DANN wird die question geändert
@@ -193,4 +177,60 @@ public class CardSetController {
         return existingCard;
     }
 
+/*    // Abfrage der Karte mit dem ältesten nextDueDate
+    @GetMapping("/{cardSetId}/drawCard")
+    public Card drawCardWithOldestDueDate(@PathVariable Long cardSetId) {
+        CardSet cardSet = cardSetService.getCardSetbyId(cardSetId);
+
+        // Ziehen Sie die Karte mit dem ältesten nextDueDate aus dem Kartenstapel
+        Card drawnCard = cardSetService.drawCardWithOldestDueDateFromSet(cardSet);
+
+        return drawnCard;
+    }
+
+    // Beantworten der Frage und Aktualisieren der Karte
+    @PutMapping("/{cardSetId}/answerCard/{cardId}")
+    public Card answerCard(@PathVariable Long cardSetId, @PathVariable Long cardId, @RequestBody String userAnswer) {
+        // Nehmen Sie an, dass Sie die Karte in der Datenbank oder im Service finden können.
+        CardSet existingCardSet = cardSetService.getCardSetbyId(cardSetId);
+        Card existingCard = cardService.getCardFromCardSetByID(existingCardSet, cardId);
+
+        if (existingCard != null) {
+            // Verwenden Sie die checkUserAnswer-Methode in der Karte, um die Antwort zu überprüfen.
+            if (((TextCard)existingCard).checkUserAnswer(userAnswer)) {
+                // Wenn die Antwort korrekt ist, führen Sie die Aktualisierung durch.
+                cardService.updateCardAfterCorrectAnswer(existingCard);
+            }
+        }
+
+        return existingCard;
+    }*/
+
+    @GetMapping("/{cardSetId}/drawCard")
+    public Card drawCardWithOldestDueDate(@PathVariable Long cardSetId) {
+        CardSet cardSet = cardSetService.getCardSetbyId(cardSetId);
+
+        // Ziehen der Karte mit dem ältesten nextDueDate aus dem Kartenstapel
+        Card drawnCard = cardSetService.drawCardWithOldestDueDateFromSet(cardSet);
+
+        return drawnCard; // Return the drawn card, which includes the card's ID.
+    }
+
+    // Beantworten der Frage und Aktualisieren der Karte
+    @PutMapping("/{cardSetId}/answerCard")
+    public Card answerCard(@PathVariable Long cardSetId, @RequestBody CardRequest request) {
+        // Verwenden Sie die ID der gezogenen Karte aus der vorherigen Antwort.
+        CardSet cardSet = cardSetService.getCardSetbyId(cardSetId);
+        Card drawnCard = drawCardWithOldestDueDate(cardSetId);
+
+        if (drawnCard != null) {
+            if (((TextCard)drawnCard).checkUserAnswer(request.getUserAnswer())) {
+                // Wenn die Antwort korrekt ist, führen Sie die Aktualisierung durch.
+                cardService.updateCardAfterCorrectAnswer(drawnCard);
+                cardService.updateCardInCardSet(cardSet,drawnCard);
+            }
+        }
+
+        return drawnCard; // Return the updated card.
+    }
 }

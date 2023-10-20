@@ -9,6 +9,7 @@ public class CardRequest {
     private String answer; // Je nach Kartentyp (Text, Zahl, Multiple Choice) könnte das Antwortformat unterschiedlich sein.
     private String[] choices; // Dieses Feld ist für Multiple Choice-Karten erforderlich.
     private boolean[] answerCorrect; // Für Multiple Choice-Karten, um die richtigen Antworten zu kennzeichnen.
+    private String userAnswer;
 
     public CardRequest(){
 

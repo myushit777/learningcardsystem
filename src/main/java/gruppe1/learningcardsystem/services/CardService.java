@@ -4,6 +4,7 @@ import gruppe1.learningcardsystem.controller.responses.Card;
 import gruppe1.learningcardsystem.controller.responses.CardSet;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -32,6 +33,14 @@ public class CardService {
     public Card getCardFromCardSetByID(CardSet cardSet, Long id) {
         return cardSet.getCards().get(id.intValue());
     }
+
+    //erhöht Successcount um 1 bei richtiger Antwort
+    public void updateCardAfterCorrectAnswer(Card card) {
+        card.setSuccessCount(card.getSuccessCount() + 1);
+        // Aktualisiere das nextDueDate, z.B. auf einen Tag in der Zukunft:
+        card.setNextDueDate(LocalDateTime.now().plusDays(1));
+    }
+
 
 
 }

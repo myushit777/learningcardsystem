@@ -10,7 +10,7 @@ public abstract class Card {
     private Integer successCount = 0;
     private LocalDateTime creationDate = LocalDateTime.now();
     private LocalDateTime nextDueDate = LocalDateTime.now();
-    private boolean isDraft = false;
+    private boolean isDraft = true;
     private String question;
 
     public Card(){

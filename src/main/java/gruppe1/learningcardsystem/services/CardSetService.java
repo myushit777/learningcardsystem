@@ -5,7 +5,9 @@ import lombok.Data;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Data
@@ -37,6 +39,36 @@ public class CardSetService {
             }
         } return null;
     }
+
+    //ziehe Karte mit dem ältesten DueDate
+        public Card drawCardWithOldestDueDateFromSet(CardSet cardSet) {
+            List<Card> cards = cardSet.getCards();
+
+            if (cards.isEmpty()) {
+                return null; // Keine Karten im Kartenstapel
+            }
+
+            // filtert alle Karten mit isDraft false raus um diese abzufragen
+            List<Card> nonDraftCards = cards.stream()
+                    .filter(card -> !card.isDraft())
+                    .collect(Collectors.toList());
+
+            if (nonDraftCards.isEmpty()) {
+                return null; // Keine nicht-Entwurfskarten im Kartenstapel
+            }
+
+            // Sortieren Sie die nicht-Entwurfskarten nach dem nextDueDate in aufsteigender Reihenfolge
+            nonDraftCards.sort(Comparator.comparing(Card::getNextDueDate));
+
+            // Ziehen Sie die Karte mit dem ältesten nextDueDate (erste Karte in der sortierten Liste)
+            Card drawnCard = nonDraftCards.get(0);
+            nonDraftCards.remove(drawnCard); // Entfernen Sie die Karte aus dem Kartenstapel
+
+            return drawnCard;
+        }
+
+
+
 
     public  <T> T parseValue(String value) {
         try {
