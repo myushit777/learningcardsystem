@@ -10,6 +10,8 @@ public class CardRequest {
     private String[] choices; // Dieses Feld ist für Multiple Choice-Karten erforderlich.
     private boolean[] answerCorrect; // Für Multiple Choice-Karten, um die richtigen Antworten zu kennzeichnen.
     private String userAnswer;
+    private boolean userBoolean;
+    private int multiplechoiceAnswer;
 
     public CardRequest(){
 

@@ -13,7 +13,7 @@ public abstract class Card {
     private boolean isDraft = true;
     private String question;
 
-    public Card(){
+    public Card() {
 
     }
 

@@ -57,18 +57,27 @@ public class CardSetService {
                 return null; // Keine nicht-Entwurfskarten im Kartenstapel
             }
 
-            // Sortieren Sie die nicht-Entwurfskarten nach dem nextDueDate in aufsteigender Reihenfolge
+            // Sortiere die nicht-Entwurfskarten nach dem nextDueDate in aufsteigender Reihenfolge
             nonDraftCards.sort(Comparator.comparing(Card::getNextDueDate));
 
-            // Ziehen Sie die Karte mit dem ältesten nextDueDate (erste Karte in der sortierten Liste)
+            // Ziehe die Karte mit dem ältesten nextDueDate (erste Karte in der sortierten Liste)
             Card drawnCard = nonDraftCards.get(0);
-            nonDraftCards.remove(drawnCard); // Entfernen Sie die Karte aus dem Kartenstapel
+            nonDraftCards.remove(drawnCard); // Entferne die Karte aus dem Kartenstapel
 
             return drawnCard;
         }
 
+    public String drawCardQuestionWithOldestDueDateFromSet(CardSet cardSet) {
+        Card drawnCard = drawCardWithOldestDueDateFromSet(cardSet);
 
+        if (drawnCard != null) {
+            // Rückgabe der Frage der gezogenen Karte
+            return drawnCard.getQuestion();
+        }
 
+        // Wenn keine geeignete Karte gefunden wurde, gebe null zurück
+        return null;
+    }
 
     public  <T> T parseValue(String value) {
         try {

@@ -41,6 +41,10 @@ public class CardService {
         card.setNextDueDate(LocalDateTime.now().plusDays(1));
     }
 
+    public boolean isCardType(Card card, Class<?> expectedType) {
+        return expectedType.isInstance(card);
+    }
+
 
 
 }

@@ -52,6 +52,7 @@ public class CardSetController {
         NumberCard numberCard = new NumberCard<>();
         numberCard.setQuestion(request.getQuestion());
         numberCard.setAnswer(cardSetService.parseValue(request.getAnswer()));
+        numberCard.setDraft(false);
         cardService.addCardToCardSet(cardSetService.getCardSetbyId(cardSetId), numberCard);
         return numberCard;
     }
@@ -74,6 +75,7 @@ public class CardSetController {
         multipleChoiceCard.setQuestion(request.getQuestion());
         multipleChoiceCard.setAnswer(request.getChoices());
         multipleChoiceCard.setAnswerCorrect(request.getAnswerCorrect());
+        multipleChoiceCard.setDraft(false);
         cardService.addCardToCardSet(cardSetService.getCardSetbyId(cardSetId), multipleChoiceCard);
         return multipleChoiceCard;
     }
@@ -85,6 +87,7 @@ public class CardSetController {
         multiChoiceCard.setQuestion(request.getQuestion());
         multiChoiceCard.setAnswer(request.getChoices());
         multiChoiceCard.setAnswerCorrect(request.getAnswerCorrect());
+        multiChoiceCard.setDraft(false);
         cardService.addCardToCardSet(cardSetService.getCardSetbyId(cardSetId), multiChoiceCard);
 
         return multiChoiceCard;
@@ -130,7 +133,7 @@ public class CardSetController {
             }
 
             //wenn NumberCard
-            if (existingCard instanceof NumberCard) {
+            if (cardService.isCardType(existingCard, NumberCard.class)) {
                 NumberCard<?> numberCard = (NumberCard<?>) existingCard;
 
                 //wenn in request mitgegeben
@@ -139,7 +142,7 @@ public class CardSetController {
                 }
 
                 //wenn TextCard
-            } else if (existingCard instanceof TextCard) {
+            } else if (cardService.isCardType(existingCard,TextCard.class)) {
 
                 //wenn in request mitgegeben
                 if (request.getAnswer() != null) {
@@ -147,7 +150,7 @@ public class CardSetController {
                 }
 
                 //wenn MultipleChoice
-            } else if (existingCard instanceof MultipleChoiceCard) {
+            } else if (cardService.isCardType(existingCard,MultipleChoiceCard.class)) {
                 MultipleChoiceCard multipleChoiceCard = (MultipleChoiceCard) existingCard;
 
                 //wenn in request mitgegeben
@@ -159,7 +162,7 @@ public class CardSetController {
                 }
 
                 //wenn MultiChoicde
-            } else if (existingCard instanceof MultiChoiceCard) {
+            } else if (cardService.isCardType(existingCard,MultiChoiceCard.class)) {
                 MultiChoiceCard multiChoiceCard = (MultiChoiceCard) existingCard;
 
                 //wenn in request mitgegeben
@@ -177,60 +180,46 @@ public class CardSetController {
         return existingCard;
     }
 
-/*    // Abfrage der Karte mit dem ältesten nextDueDate
-    @GetMapping("/{cardSetId}/drawCard")
-    public Card drawCardWithOldestDueDate(@PathVariable Long cardSetId) {
-        CardSet cardSet = cardSetService.getCardSetbyId(cardSetId);
-
-        // Ziehen Sie die Karte mit dem ältesten nextDueDate aus dem Kartenstapel
-        Card drawnCard = cardSetService.drawCardWithOldestDueDateFromSet(cardSet);
-
-        return drawnCard;
-    }
-
-    // Beantworten der Frage und Aktualisieren der Karte
-    @PutMapping("/{cardSetId}/answerCard/{cardId}")
-    public Card answerCard(@PathVariable Long cardSetId, @PathVariable Long cardId, @RequestBody String userAnswer) {
-        // Nehmen Sie an, dass Sie die Karte in der Datenbank oder im Service finden können.
-        CardSet existingCardSet = cardSetService.getCardSetbyId(cardSetId);
-        Card existingCard = cardService.getCardFromCardSetByID(existingCardSet, cardId);
-
-        if (existingCard != null) {
-            // Verwenden Sie die checkUserAnswer-Methode in der Karte, um die Antwort zu überprüfen.
-            if (((TextCard)existingCard).checkUserAnswer(userAnswer)) {
-                // Wenn die Antwort korrekt ist, führen Sie die Aktualisierung durch.
-                cardService.updateCardAfterCorrectAnswer(existingCard);
-            }
-        }
-
-        return existingCard;
-    }*/
 
     @GetMapping("/{cardSetId}/drawCard")
-    public Card drawCardWithOldestDueDate(@PathVariable Long cardSetId) {
-        CardSet cardSet = cardSetService.getCardSetbyId(cardSetId);
+    public String drawCardWithOldestDueDate(@PathVariable Long cardSetId) {
 
-        // Ziehen der Karte mit dem ältesten nextDueDate aus dem Kartenstapel
-        Card drawnCard = cardSetService.drawCardWithOldestDueDateFromSet(cardSet);
-
-        return drawnCard; // Return the drawn card, which includes the card's ID.
+        return cardSetService.drawCardQuestionWithOldestDueDateFromSet(cardSetService.getCardSetbyId(cardSetId)); // Return the drawn card, which includes the card's ID.
     }
 
     // Beantworten der Frage und Aktualisieren der Karte
     @PutMapping("/{cardSetId}/answerCard")
     public Card answerCard(@PathVariable Long cardSetId, @RequestBody CardRequest request) {
         // Verwenden Sie die ID der gezogenen Karte aus der vorherigen Antwort.
+        //wenn in einer Methode ein Wert mehr als einmal gebraucht wird lohnt sich die var cardSet?? frage an Dozent
         CardSet cardSet = cardSetService.getCardSetbyId(cardSetId);
-        Card drawnCard = drawCardWithOldestDueDate(cardSetId);
+        Card drawnCard = cardSetService.drawCardWithOldestDueDateFromSet(cardSet);
 
         if (drawnCard != null) {
-            if (((TextCard)drawnCard).checkUserAnswer(request.getUserAnswer())) {
-                // Wenn die Antwort korrekt ist, führen Sie die Aktualisierung durch.
+            if (cardService.isCardType(drawnCard, TextCard.class)) {
+                if (((TextCard) drawnCard).checkUserAnswer(request.getUserAnswer())) {
+                    //wenn antwort korrekt aktualisiere karte
+                    cardService.updateCardAfterCorrectAnswer(drawnCard);
+                    cardService.updateCardInCardSet(cardSet, drawnCard);
+                }
+            }
+
+            //Antwortlogik für NumberCard
+            //checkt ob der String ein int, double oder long ist
+            if(cardService.isCardType(drawnCard, NumberCard.class))
+            if (((NumberCard)drawnCard).checkUserAnswer(cardSetService.parseValue(request.getUserAnswer()))){
                 cardService.updateCardAfterCorrectAnswer(drawnCard);
                 cardService.updateCardInCardSet(cardSet,drawnCard);
             }
+
+            if (cardService.isCardType(drawnCard,MultipleChoiceCard.class)) {
+                if (((MultipleChoiceCard) drawnCard).checkUserAnswer(request.getMultiplechoiceAnswer())) {
+                    cardService.updateCardAfterCorrectAnswer(drawnCard);
+                    cardService.updateCardInCardSet(cardSet, drawnCard);
+                }
+            }
         }
 
-        return drawnCard; // Return the updated card.
+        return drawnCard; // return updated card
     }
 }
