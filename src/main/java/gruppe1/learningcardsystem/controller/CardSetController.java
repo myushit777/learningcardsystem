@@ -37,6 +37,11 @@ public class CardSetController {
         return cardSetService.getCardSetbyId(id);
     }
 
+    @GetMapping("/{cardSetId}/{cardId}")
+    public Card getCardById(@PathVariable Long cardSetId, @PathVariable Long cardId){
+        return cardSetService.getCardSetbyId(cardSetId).getCards().get((--cardId).intValue());
+    }
+
     //ADD CARDSET
     @PostMapping
     public CardSet addCardSet(@RequestBody CardsetRequest request) {
@@ -58,7 +63,7 @@ public class CardSetController {
     }
 
     //ADD TEXTCARD STRING TO CARDSET
-    @PostMapping("/{cardSetId}/addT")
+    @PostMapping("/{cardSetId}/addText")
     public Card addTextCardToCardSet(@PathVariable Long cardSetId, @RequestBody CardRequest request) {
         TextCard textCard = new TextCard();
         textCard.setQuestion(request.getQuestion());
