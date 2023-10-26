@@ -37,6 +37,7 @@ public class CardSetController {
         return cardSetService.getCardSetbyId(id);
     }
 
+    //SUCHE KARTE IN KASTEN ID MIT CARD ID
     @GetMapping("/{cardSetId}/{cardId}")
     public Card getCardById(@PathVariable Long cardSetId, @PathVariable Long cardId){
         return cardSetService.getCardSetbyId(cardSetId).getCards().get((--cardId).intValue());
@@ -102,6 +103,7 @@ public class CardSetController {
     @DeleteMapping("/{cardSetId}/{cardId}")
     public void deleteCardFromCardSet(@PathVariable Long cardSetId, @PathVariable Long cardId) {
         cardService.deleteCardFromCardSet(cardSetService.getCardSetbyId(cardSetId), --cardId);
+        cardSetService.updateCardSet(cardSetService.getCardSetbyId(cardSetId));
     }
 
     //DELETE CARDSET
