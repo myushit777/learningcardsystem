@@ -13,25 +13,16 @@ public class MultipleChoiceCard extends Card{
 
     }
 
-    public MultipleChoiceCard(
-            Long id,
-            Integer successCount,
-            LocalDateTime creationDate,
-            LocalDateTime nextDueDate,
-            boolean isDraft,
-            String question,
-            String[] answer,
-            boolean[] answerCorrect
-    ) {
-        super(id, successCount, creationDate, nextDueDate, isDraft, question);
-        this.answer = answer;
-        this.answerCorrect = answerCorrect;
+    public boolean checkUserAnswer(String userChosenAnswer) {
+        try {
+            int index = Integer.parseInt(userChosenAnswer) - 1; // Der Index beginnt bei 0, deshalb subtrahieren wir 1.
+            if (index >= 0 && index < answerCorrect.length) {
+                return answerCorrect[index];
+            }
+        } catch (NumberFormatException e) {
+            // Wenn die Umwandlung in einen Index fehlschlägt, wird false zurückgegeben.
+        }
+        return false; // Wenn der Index ungültig ist oder ein Fehler auftritt, wird false zurückgegeben.
     }
 
-    public boolean checkUserAnswer(int userChooseAnswerNumber) {
-        if (userChooseAnswerNumber >= 1 && userChooseAnswerNumber <= answer.length) {
-            return answerCorrect[userChooseAnswerNumber - 1];
-        }
-        return false;
-    }
 }

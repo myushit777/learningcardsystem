@@ -4,6 +4,7 @@ import gruppe1.learningcardsystem.controller.responses.*;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -67,16 +68,28 @@ public class CardSetService {
 
     public String drawCardQuestionWithOldestDueDateFromSet(CardSet cardSet) {
         Card drawnCard = drawCardWithOldestDueDateFromSet(cardSet);
+        if(drawnCard instanceof MultipleChoiceCard){
+            return drawnCard.getQuestion() + "\n"
+                    +Arrays.toString(((MultipleChoiceCard) drawnCard).getAnswer());
+        }
+
+        if(drawnCard instanceof MultiChoiceCard){
+            return drawnCard.getQuestion() + "\n"
+                    +Arrays.toString(((MultiChoiceCard) drawnCard).getAnswer());
+        }
 
         if (drawnCard != null) {
             // Rückgabe der Frage der gezogenen Karte
             return drawnCard.getQuestion();
+
         }
 
         // Wenn keine geeignete Karte gefunden wurde, gebe null zurück
         return null;
     }
 
+    //da wir als Antwort für alle Karten einen String in unserer Request annehmen wird hier der String in den
+    //jeweiligen Datentyp geändert
     public  <T> T parseValue(String value) {
         try {
             if (value.contains(".")) {

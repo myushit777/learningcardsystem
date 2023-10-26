@@ -10,7 +10,6 @@ import gruppe1.learningcardsystem.controller.requests.CardsetRequest;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 @RestController
 @RequestMapping("/cardsets")
@@ -76,9 +75,9 @@ public class CardSetController {
         return textCard;
     }
 
-    //ADD MULTIPLECHOICECARD TO CARDSET
+    //ADD MULTIPLECHOICE TO CARDSET
     @PostMapping("/{cardSetId}/addMultiple")
-    public Card addMutlipleChoiceCardToCardSet(@PathVariable Long cardSetId, @RequestBody CardRequest request) {
+    public Card addMultipleChoiceCardToCardSet(@PathVariable Long cardSetId, @RequestBody CardRequest request) {
         MultipleChoiceCard multipleChoiceCard = new MultipleChoiceCard();
         multipleChoiceCard.setQuestion(request.getQuestion());
         multipleChoiceCard.setAnswer(request.getChoices());
@@ -97,7 +96,6 @@ public class CardSetController {
         multiChoiceCard.setAnswerCorrect(request.getAnswerCorrect());
         multiChoiceCard.setDraft(false);
         cardService.addCardToCardSet(cardSetService.getCardSetbyId(cardSetId), multiChoiceCard);
-
         return multiChoiceCard;
     }
 
@@ -124,7 +122,7 @@ public class CardSetController {
 
     // Update a Card in a CardSet (generic method for all card types)
     @PutMapping("/{cardSetId}/{cardId}")
-    public Card updateCardYEAInCardSet(@PathVariable Long cardSetId, @PathVariable Long cardId, @RequestBody CardRequest request) {
+    public Card updateCardInCardSet(@PathVariable Long cardSetId, @PathVariable Long cardId, @RequestBody CardRequest request) {
         CardSet cardSet = cardSetService.getCardSetbyId(cardSetId);
         Card existingCard = cardService.getCardFromCardSetByID(cardSet, cardId);
 
@@ -213,16 +211,22 @@ public class CardSetController {
                 }
             }
 
-            //Antwortlogik für NumberCard
-            //checkt ob der String ein int, double oder long ist
-            if(cardService.isCardType(drawnCard, NumberCard.class))
-            if (((NumberCard)drawnCard).checkUserAnswer(cardSetService.parseValue(request.getUserAnswer()))){
-                cardService.updateCardAfterCorrectAnswer(drawnCard);
-                cardService.updateCardInCardSet(cardSet,drawnCard);
+            if(cardService.isCardType(drawnCard, NumberCard.class)) {
+                if (((NumberCard<?>) drawnCard).checkUserAnswer(request.getUserAnswer())) {
+                    cardService.updateCardAfterCorrectAnswer(drawnCard);
+                    cardService.updateCardInCardSet(cardSet, drawnCard);
+                }
             }
 
             if (cardService.isCardType(drawnCard,MultipleChoiceCard.class)) {
-                if (((MultipleChoiceCard) drawnCard).checkUserAnswer(request.getMultiplechoiceAnswer())) {
+                if (((MultipleChoiceCard) drawnCard).checkUserAnswer(request.getUserAnswer())) {
+                    cardService.updateCardAfterCorrectAnswer(drawnCard);
+                    cardService.updateCardInCardSet(cardSet, drawnCard);
+                }
+            }
+
+            if (cardService.isCardType(drawnCard,MultiChoiceCard.class)) {
+                if (((MultiChoiceCard) drawnCard).checkUserAnswer(request.getUserAnswer())) {
                     cardService.updateCardAfterCorrectAnswer(drawnCard);
                     cardService.updateCardInCardSet(cardSet, drawnCard);
                 }
