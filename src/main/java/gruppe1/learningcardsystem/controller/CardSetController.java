@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import gruppe1.learningcardsystem.controller.requests.CardsetRequest;
 
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @RestController
@@ -27,8 +28,8 @@ public class CardSetController {
 
     //ALLE CARDSETS
     @GetMapping
-    public List<CardSet> getAllCardsets() {
-        return cardSetService.getCardSetList();
+    public LinkedHashMap<Long,CardSet> getAllCardsets() {
+        return cardSetService.getCardSetMap();
     }
 
     //CARDSETS PER ID SUCHEN
@@ -40,7 +41,8 @@ public class CardSetController {
     //SUCHE KARTE IN KASTEN ID MIT CARD ID
     @GetMapping("/{cardSetId}/{cardId}")
     public Card getCardById(@PathVariable Long cardSetId, @PathVariable Long cardId){
-        return cardSetService.getCardSetbyId(cardSetId).getCards().get((--cardId).intValue());
+        //return cardSetService.getCardSetbyId(cardSetId).getCards().get((cardId);
+        return cardService.getCardFromCardSetByID(cardSetService.getCardSetbyId(cardSetId),cardId);
     }
 
     //ADD CARDSET
@@ -102,7 +104,7 @@ public class CardSetController {
     //DELETE CARD FROM SET
     @DeleteMapping("/{cardSetId}/{cardId}")
     public void deleteCardFromCardSet(@PathVariable Long cardSetId, @PathVariable Long cardId) {
-        cardService.deleteCardFromCardSet(cardSetService.getCardSetbyId(cardSetId), --cardId);
+        cardService.deleteCardFromCardSet(cardSetService.getCardSetbyId(cardSetId), cardId);
         cardSetService.updateCardSet(cardSetService.getCardSetbyId(cardSetId));
     }
 
@@ -124,7 +126,7 @@ public class CardSetController {
     @PutMapping("/{cardSetId}/{cardId}")
     public Card updateCardYEAInCardSet(@PathVariable Long cardSetId, @PathVariable Long cardId, @RequestBody CardRequest request) {
         CardSet cardSet = cardSetService.getCardSetbyId(cardSetId);
-        Card existingCard = cardService.getCardFromCardSetByID(cardSet, --cardId);
+        Card existingCard = cardService.getCardFromCardSetByID(cardSet, cardId);
 
         //existiert eine Card?
         if (existingCard != null) {

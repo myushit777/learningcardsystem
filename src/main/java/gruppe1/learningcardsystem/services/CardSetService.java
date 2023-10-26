@@ -4,8 +4,8 @@ import gruppe1.learningcardsystem.controller.responses.*;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -13,59 +13,57 @@ import java.util.stream.Collectors;
 @Data
 public class CardSetService {
 
-    private final List<CardSet> cardSetList = new ArrayList<>();
-    private long nextCardSetId = 0;
+    private final LinkedHashMap<Long,CardSet> cardSetMap = new LinkedHashMap<>();
+    private long nextCardSetId = 1;
 
     public CardSet createCardSet(CardSet cardSet){
         cardSet.setId(nextCardSetId);
-        cardSetList.add(cardSet);
+        cardSetMap.put(nextCardSetId,cardSet);
         nextCardSetId++;
         return cardSet;
     }
 
     public CardSet getCardSetbyId(Long id){
-        return cardSetList.get(id.intValue());
+        return cardSetMap.get(id);
     }
 
     public void deleteCardSet(Long id){
-        cardSetList.remove(id.intValue());
+        cardSetMap.remove(id);
     }
 
     public CardSet updateCardSet(CardSet cardSet) {
-        for (int i = 0; i < cardSetList.size(); i++) {
-            if (cardSetList.get(i).getId() ==(cardSet.getId())) {
-                cardSetList.set(i, cardSet);
-                return cardSet;
-            }
-        } return null;
+        cardSetMap.put(cardSet.getId(),cardSet);
+        return cardSet;
     }
 
+
     //ziehe Karte mit dem ältesten DueDate
-        public Card drawCardWithOldestDueDateFromSet(CardSet cardSet) {
-            List<Card> cards = cardSet.getCards();
+    public Card drawCardWithOldestDueDateFromSet(CardSet cardSet) {
+        LinkedHashMap<Long, Card> cards = cardSet.getCards();
 
-            if (cards.isEmpty()) {
-                return null; // Keine Karten im Kartenstapel
-            }
-
-            // filtert alle Karten mit isDraft false raus um diese abzufragen
-            List<Card> nonDraftCards = cards.stream()
-                    .filter(card -> !card.isDraft())
-                    .collect(Collectors.toList());
-
-            if (nonDraftCards.isEmpty()) {
-                return null; // Keine nicht-Entwurfskarten im Kartenstapel
-            }
-
-            // Sortiere die nicht-Entwurfskarten nach dem nextDueDate in aufsteigender Reihenfolge
-            nonDraftCards.sort(Comparator.comparing(Card::getNextDueDate));
-
-            // Ziehe die Karte mit dem ältesten nextDueDate (erste Karte in der sortierten Liste)
-            Card drawnCard = nonDraftCards.get(0);
-            nonDraftCards.remove(drawnCard); // Entferne die Karte aus dem Kartenstapel
-
-            return drawnCard;
+        if (cards.isEmpty()) {
+            return null; // Keine Karten im Kartenstapel
         }
+
+        // Filtert alle Karten mit isDraft false raus, um diese abzufragen
+        List<Card> nonDraftCards = cards.values().stream()
+                .filter(card -> !card.isDraft())
+                .collect(Collectors.toList());
+
+        if (nonDraftCards.isEmpty()) {
+            return null; // Keine nicht-Entwurfskarten im Kartenstapel
+        }
+
+        // Sortiere die nicht-Entwurfskarten nach dem nextDueDate in aufsteigender Reihenfolge
+        nonDraftCards.sort(Comparator.comparing(Card::getNextDueDate));
+
+        // Ziehe die Karte mit dem ältesten nextDueDate (erste Karte in der sortierten Liste)
+        Card drawnCard = nonDraftCards.get(0);
+        nonDraftCards.remove(drawnCard); // Entferne die Karte aus dem Kartenstapel
+
+        return drawnCard;
+    }
+
 
     public String drawCardQuestionWithOldestDueDateFromSet(CardSet cardSet) {
         Card drawnCard = drawCardWithOldestDueDateFromSet(cardSet);

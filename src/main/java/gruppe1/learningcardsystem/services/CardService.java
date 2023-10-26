@@ -5,8 +5,7 @@ import gruppe1.learningcardsystem.controller.responses.CardSet;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.LinkedHashMap;
 
 @Service
 public class CardService {
@@ -21,17 +20,18 @@ public class CardService {
     }
 
     public Card updateCardInCardSet(CardSet cardSet, Card card) {
-        for (int i = 0; i < cardSet.getCards().size(); i++) {
-            if (Objects.equals(cardSet.getCards().get(i).getId(), card.getId())) {
-                cardSet.getCards().set(i, card);
-                return card;
-            }
+        LinkedHashMap<Long, Card> cards = cardSet.getCards();
+
+        if (cards.containsKey(card.getId())) {
+            cards.put(card.getId(), card);
+            return card;
         }
+
         return null;
     }
 
     public Card getCardFromCardSetByID(CardSet cardSet, Long id) {
-        return cardSet.getCards().get(id.intValue());
+        return cardSet.getCards().get(id);
     }
 
     //erhöht Successcount um 1 bei richtiger Antwort
