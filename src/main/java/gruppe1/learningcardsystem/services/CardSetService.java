@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+//diese Klasse verwaltet alle Funktionen die ein Cardset braucht
 @Service
 @Data
 public class CardSetService {
@@ -17,6 +18,7 @@ public class CardSetService {
     private final LinkedHashMap<Long,CardSet> cardSetMap = new LinkedHashMap<>();
     private long nextCardSetId = 1;
 
+    //erstelle ein Cardset und füge sie der Map hinzu
     public CardSet createCardSet(CardSet cardSet){
         cardSet.setId(nextCardSetId);
         cardSetMap.put(nextCardSetId,cardSet);
@@ -24,14 +26,17 @@ public class CardSetService {
         return cardSet;
     }
 
+    //gibt ein Cardset per ID zurück
     public CardSet getCardSetbyId(Long id){
         return cardSetMap.get(id);
     }
 
+    //lösche ein Cardset aus der Map
     public void deleteCardSet(Long id){
         cardSetMap.remove(id);
     }
 
+    //aktualisiere ein Cardset
     public CardSet updateCardSet(CardSet cardSet) {
         cardSetMap.put(cardSet.getId(),cardSet);
         return cardSet;
@@ -66,19 +71,24 @@ public class CardSetService {
     }
 
 
+    //gibt nur die Frage der gezogenen Karte aus um nicht die Antwort zu spoilern
     public String drawCardQuestionWithOldestDueDateFromSet(CardSet cardSet) {
         Card drawnCard = drawCardWithOldestDueDateFromSet(cardSet);
+
+        //if Multiple gebe Frage als auch Auswahl der Antworten zurück
         if(drawnCard instanceof MultipleChoiceCard){
             return drawnCard.getQuestion() + "\n"
                     +Arrays.toString(((MultipleChoiceCard) drawnCard).getAnswer());
         }
 
+        //if Multi gebe Frage als auch Auswahl der Antworten zurück
         if(drawnCard instanceof MultiChoiceCard){
             return drawnCard.getQuestion() + "\n"
                     +Arrays.toString(((MultiChoiceCard) drawnCard).getAnswer());
         }
 
         if (drawnCard != null) {
+
             // Rückgabe der Frage der gezogenen Karte
             return drawnCard.getQuestion();
 
@@ -88,8 +98,7 @@ public class CardSetService {
         return null;
     }
 
-    //da wir als Antwort für alle Karten einen String in unserer Request annehmen wird hier der String in den
-    //jeweiligen Datentyp geändert
+    /*da in der Request nur ein String übergeben wird, parst diese Methode den String in den jeweiligen Datentyp */
     public  <T> T parseValue(String value) {
         try {
             if (value.contains(".")) {

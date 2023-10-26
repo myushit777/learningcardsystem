@@ -13,6 +13,7 @@ public class MultipleChoiceCard extends Card{
 
     }
 
+    //checkt ob der String eine Zahl ist und parst diesen um mit dem Index abzugleichen
     public boolean checkUserAnswer(String userChosenAnswer) {
         try {
             int index = Integer.parseInt(userChosenAnswer) - 1; // Der Index beginnt bei 0, deshalb subtrahieren wir 1.

@@ -11,6 +11,11 @@ import gruppe1.learningcardsystem.controller.requests.CardsetRequest;
 import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 
+
+/*
+Es gibt nur ein Controller, da für jede Aktion entweder alle Cardsets oder ein bestimmtes Cardset angesprochen wird.
+Karten existieren außerhalb eines Kastens nicht, somit wird immer zuerst der Kasten dann die Karte angesprochen
+ */
 @RestController
 @RequestMapping("/cardsets")
 public class CardSetController {
@@ -25,26 +30,26 @@ public class CardSetController {
         this.cardService = cardService;
     }
 
-    //ALLE CARDSETS
+    //gebe alle Cardsets aus
     @GetMapping
     public LinkedHashMap<Long,CardSet> getAllCardsets() {
         return cardSetService.getCardSetMap();
     }
 
-    //CARDSETS PER ID SUCHEN
+    //ein Cardset per ID suchen
     @GetMapping("/{id}")
     public CardSet getCardSetbyId(@PathVariable Long id) {
         return cardSetService.getCardSetbyId(id);
     }
 
-    //SUCHE KARTE IN KASTEN ID MIT CARD ID
+    //suche in einem Cardset eine Card (man benötigt ID von Kasten und Karte)
     @GetMapping("/{cardSetId}/{cardId}")
     public Card getCardById(@PathVariable Long cardSetId, @PathVariable Long cardId){
         //return cardSetService.getCardSetbyId(cardSetId).getCards().get((cardId);
         return cardService.getCardFromCardSetByID(cardSetService.getCardSetbyId(cardSetId),cardId);
     }
 
-    //ADD CARDSET
+    //erstelle ein neues Cardset
     @PostMapping
     public CardSet addCardSet(@RequestBody CardsetRequest request) {
         CardSet cardSet = new CardSet();
@@ -53,7 +58,7 @@ public class CardSetController {
         return cardSetService.createCardSet(cardSet);
     }
 
-    //ADD NUMBERCARD DOUBLE TO CARDSET
+    //füge eine Numbercard einem Cardset hinzu
     @PostMapping("/{cardSetId}/addNumber")
     public Card addDoubleCardToCardSet(@PathVariable Long cardSetId, @RequestBody CardRequest request) {
         NumberCard numberCard = new NumberCard<>();
@@ -64,7 +69,7 @@ public class CardSetController {
         return numberCard;
     }
 
-    //ADD TEXTCARD STRING TO CARDSET
+    //füge eine Textcard einem Cardset hinzu
     @PostMapping("/{cardSetId}/addText")
     public Card addTextCardToCardSet(@PathVariable Long cardSetId, @RequestBody CardRequest request) {
         TextCard textCard = new TextCard();
@@ -75,7 +80,7 @@ public class CardSetController {
         return textCard;
     }
 
-    //ADD MULTIPLECHOICE TO CARDSET
+    //füge eine Multiplechoicecard einem Cardset hinzu
     @PostMapping("/{cardSetId}/addMultiple")
     public Card addMultipleChoiceCardToCardSet(@PathVariable Long cardSetId, @RequestBody CardRequest request) {
         MultipleChoiceCard multipleChoiceCard = new MultipleChoiceCard();
@@ -87,7 +92,7 @@ public class CardSetController {
         return multipleChoiceCard;
     }
 
-    //ADD MULTICARD TO CARDSET
+    //füge eine Multichoicecard einem Cardset hinzu
     @PostMapping("/{cardSetId}/addMulti")
     public Card addMultiChoiceCardToCardSet(@PathVariable Long cardSetId, @RequestBody CardRequest request) {
         MultiChoiceCard multiChoiceCard = new MultiChoiceCard();
@@ -99,20 +104,20 @@ public class CardSetController {
         return multiChoiceCard;
     }
 
-    //DELETE CARD FROM SET
+    //lösche eine Card in einem Cardset (man benötigt ID von Cardset und Card)
     @DeleteMapping("/{cardSetId}/{cardId}")
     public void deleteCardFromCardSet(@PathVariable Long cardSetId, @PathVariable Long cardId) {
         cardService.deleteCardFromCardSet(cardSetService.getCardSetbyId(cardSetId), cardId);
         cardSetService.updateCardSet(cardSetService.getCardSetbyId(cardSetId));
     }
 
-    //DELETE CARDSET
+    //lösche ein Cardset per ID
     @DeleteMapping("/{id}")
     public void deleteCardSet(@PathVariable Long id) {
         cardSetService.deleteCardSet(id);
     }
 
-    //UPDATE A CARDSET
+    //aktualisiere ein Cardset per ID
     @PutMapping("/{id}")
     public CardSet updateCardSet(@PathVariable Long id, @RequestBody CardsetRequest request) {
         CardSet existingCardSet = cardSetService.getCardSetbyId(id);
@@ -120,7 +125,7 @@ public class CardSetController {
         return cardSetService.updateCardSet(existingCardSet);
     }
 
-    // Update a Card in a CardSet (generic method for all card types)
+    // Update eine Card in einem Cardset (man benötigt ID von Cardset und Card)
     @PutMapping("/{cardSetId}/{cardId}")
     public Card updateCardInCardSet(@PathVariable Long cardSetId, @PathVariable Long cardId, @RequestBody CardRequest request) {
         CardSet cardSet = cardSetService.getCardSetbyId(cardSetId);
@@ -188,21 +193,23 @@ public class CardSetController {
     }
 
 
+    //ziehe die Karte mit dem "ältesten" dueDate und gebe die Frage zurück
     @GetMapping("/{cardSetId}/drawCard")
     public String drawCardWithOldestDueDate(@PathVariable Long cardSetId) {
 
         return cardSetService.drawCardQuestionWithOldestDueDateFromSet(cardSetService.getCardSetbyId(cardSetId)); // Return the drawn card, which includes the card's ID.
     }
 
-    // Beantworten der Frage und Aktualisieren der Karte
+    // Beantworten einer Karte und Aktualisieren der Karte
     @PutMapping("/{cardSetId}/answerCard")
     public Card answerCard(@PathVariable Long cardSetId, @RequestBody CardRequest request) {
-        // Verwenden Sie die ID der gezogenen Karte aus der vorherigen Antwort.
-        //wenn in einer Methode ein Wert mehr als einmal gebraucht wird lohnt sich die var cardSet?? frage an Dozent
+        //wenn in einer Methode ein Wert mehr als einmal gebraucht wird lohnt sich die variable cardSet? frage an Dozent :)
         CardSet cardSet = cardSetService.getCardSetbyId(cardSetId);
         Card drawnCard = cardSetService.drawCardWithOldestDueDateFromSet(cardSet);
 
         if (drawnCard != null) {
+
+            //wenn Textcard
             if (cardService.isCardType(drawnCard, TextCard.class)) {
                 if (((TextCard) drawnCard).checkUserAnswer(request.getUserAnswer())) {
                     //wenn antwort korrekt aktualisiere karte
@@ -211,22 +218,28 @@ public class CardSetController {
                 }
             }
 
+            //wenn Numbercard
             if(cardService.isCardType(drawnCard, NumberCard.class)) {
                 if (((NumberCard<?>) drawnCard).checkUserAnswer(request.getUserAnswer())) {
+                    //wenn antwort korrekt aktualisiere karte
                     cardService.updateCardAfterCorrectAnswer(drawnCard);
                     cardService.updateCardInCardSet(cardSet, drawnCard);
                 }
             }
 
+            //wenn Multiple
             if (cardService.isCardType(drawnCard,MultipleChoiceCard.class)) {
                 if (((MultipleChoiceCard) drawnCard).checkUserAnswer(request.getUserAnswer())) {
+                    //wenn antwort korrekt aktualisiere karte
                     cardService.updateCardAfterCorrectAnswer(drawnCard);
                     cardService.updateCardInCardSet(cardSet, drawnCard);
                 }
             }
 
+            //wenn Multi
             if (cardService.isCardType(drawnCard,MultiChoiceCard.class)) {
                 if (((MultiChoiceCard) drawnCard).checkUserAnswer(request.getUserAnswer())) {
+                    //wenn antwort korrekt aktualisiere karte
                     cardService.updateCardAfterCorrectAnswer(drawnCard);
                     cardService.updateCardInCardSet(cardSet, drawnCard);
                 }

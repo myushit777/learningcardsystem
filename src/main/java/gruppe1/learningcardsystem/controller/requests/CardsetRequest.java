@@ -2,8 +2,11 @@ package gruppe1.learningcardsystem.controller.requests;
 
 import lombok.Data;
 
+//diese Klasse hätte man auch weglassen können aber es wurde bewusst Card von Cardset getrennt
 @Data
 public class CardsetRequest {
+
+    //beinhaltet den Namen des Cardsets
     private String name;
-    // Weitere Felder, die für die Anfrage benötigt werden, können hier hinzugefügt werden.
+
 }

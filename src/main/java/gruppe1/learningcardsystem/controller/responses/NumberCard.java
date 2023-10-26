@@ -5,18 +5,13 @@ import lombok.Data;
 @Data
 public class NumberCard<T extends Number> extends Card {
 
-    //poah wir haben das so clever mit generics gemacht holy shit
+    //wir verwenden hier generics da eine Einteilung von int, double und long Cards nicht nötig ist
     private T answer;
 
     public NumberCard() {
     }
 
-//    public boolean checkUserAnswer(T userAnswer){
-//        return userAnswer.equals(this.answer);
-//    }
-//
-//}
-
+    //da wir nur einen String als Antwort in unserer Request übergeben wird diese hier wieder zu einer Zahl geparst
     public boolean checkUserAnswer(String userAnswer) {
         try {
             if (answer instanceof Double) {

@@ -22,6 +22,7 @@ public class TextCard extends Card {
         this.answer = answer;
     }
 
+    //prüft ob der userAnswer gleich der Antwort der Frage ist
     public boolean checkUserAnswer(String userAnswer){
         return userAnswer.equalsIgnoreCase(this.answer);
     }

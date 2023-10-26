@@ -21,12 +21,15 @@ public class CardSet {
     }
 
 
+    /*füge eine Card zu einem Cardset hinzu.
+     eine Karte kann nicht außerhalb eines Kastens existieren, weil es aus meiner Sicht keinen Sinn ergibt*/
     public void addCard(Card card){
         card.setId(numberOfCards);
         cards.put(numberOfCards,card);
         numberOfCards++;
     }
 
+    //löscht eine Card aus einem Cardset
     public void deleteCard(Long cardId) {
         cards.remove(cardId);
     }

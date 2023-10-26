@@ -14,12 +14,15 @@ public class MultiChoiceCard extends Card {
     }
 
 
+    //die Methode nimmt einen String entgegen, der Zahlen enthält, die mittels Kommata getrennt sind.
     public boolean checkUserAnswer(String userChosenAnswerNumbers) {
         if (userChosenAnswerNumbers == null || userChosenAnswerNumbers.isEmpty()) {
             return false;
         }
 
+        //erstelle String Array aus der userAnswer die per Komma getrennt ist und splitte diese in Felder eines Arrays
         String[] answerNumberStrings = userChosenAnswerNumbers.split(",");
+        //checkt ob eine Nummer aus dem Array dem Index von answerCorrect entspricht und prüft auf true und false
         for (String answerNumberString : answerNumberStrings) {
             try {
                 int userAnswerNumber = Integer.parseInt(answerNumberString.trim());

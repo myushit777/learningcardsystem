@@ -8,15 +8,19 @@ import java.time.LocalDateTime;
 public abstract class Card {
     private Long id;
     private Integer successCount = 0;
+    //LocalDateTime Datentyp nimmt die aktuelle Zeit unserer Zeitzone
     private LocalDateTime creationDate = LocalDateTime.now();
     private LocalDateTime nextDueDate = LocalDateTime.now();
+    //draft ist true da nicht direkt jede KArte abgefragt werden soll
     private boolean isDraft = true;
     private String question;
 
+    //default Constructor
     public Card() {
 
     }
 
+    //Constructor
     public Card(Long id, Integer successCount, LocalDateTime creationDate, LocalDateTime nextDueDate, boolean isDraft, String question) {
         this.id = id;
         this.successCount = successCount;

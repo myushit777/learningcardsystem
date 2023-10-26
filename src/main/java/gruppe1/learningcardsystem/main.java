@@ -5,6 +5,8 @@ import gruppe1.learningcardsystem.controller.responses.CardSet;
 import gruppe1.learningcardsystem.controller.responses.MultipleChoiceCard;
 import gruppe1.learningcardsystem.controller.responses.NumberCard;
 
+
+//main-method um etwas logik zu testen
 public class main {
     public static void main(String[] args) {
         String [] answer = {"1, Berlion","2","3"};
