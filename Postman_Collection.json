@@ -1,0 +1,422 @@
+{
+	"info": {
+		"_postman_id": "819ba19c-c6c9-4416-a45a-36bf59cd3dcc",
+		"name": "Lernkartensystem",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30312782"
+	},
+	"item": [
+		{
+			"name": "GET",
+			"item": [
+				{
+					"name": "alle Cardset",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/cardsets",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cardsets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cardset nach ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/cardsets/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cardsets",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Card nach ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/cardsets/1/2",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cardsets",
+								"1",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "POST",
+			"item": [
+				{
+					"name": "add Cardset",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"kasten\"\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/cardsets",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cardsets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add NumberCard",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"question\" :\"Was ist 4+4\",\n    \"answer\" : \"8\"\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/cardsets/1/addNumber",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cardsets",
+								"1",
+								"addNumber"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add TextCard",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"question\" :\"Was ist die Hauptstadt von DE\",\n    \"answer\" : \"Berlin\"\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/cardsets/1/addText",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cardsets",
+								"1",
+								"addText"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add MultipleChoice",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"question\" :\"Was ist die Hauptstadt von DE\",\n    \"choices\" : [\"1. Berlin\", \"2. Hauptstadt\", \"3. Bärlin\"],\n    \"answerCorrect\" : [true, false, false]\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/cardsets/1/addMultiple",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cardsets",
+								"1",
+								"addMultiple"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add MultiChoice",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"question\" :\"Welche Aussage ist richtig?\",\n    \"choices\" : [\"1. Die Abgabe hat mich an den Rand des Wahnsinns gebracht!!!\", \"2. Ich freue mich auf die nächste Abgabe\", \"3. Ich hätte gerne eine 1,x\"],\n    \"answerCorrect\" : [true, true, true]\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/cardsets/1/addMulti",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cardsets",
+								"1",
+								"addMulti"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "DELETE",
+			"item": [
+				{
+					"name": "delete Card in Cardset",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/cardsets/1/2",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cardsets",
+								"1",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete Cardset",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:8080/cardsets/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cardsets",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "PUT",
+			"item": [
+				{
+					"name": "Update Cardset",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\" : \"Ich bin ein Update huhu\"\r\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/cardsets/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cardsets",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Card in Cardset",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"question\" : \"Update: Was ist 10+10\",\r\n    \"answer\" : \"20\"\r\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/cardsets/1/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cardsets",
+								"1",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ABFRAGEN",
+			"item": [
+				{
+					"name": "drawCard",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/cardsets/1/drawCard",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cardsets",
+								"1",
+								"drawCard"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "answerCard",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userAnswer\" : \"1\"\r\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/cardsets/1/answerCard",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cardsets",
+								"1",
+								"answerCard"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "answerCard MultiChoice",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userAnswer\" : \"1,2,3\"\r\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/cardsets/1/answerCard",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"cardsets",
+								"1",
+								"answerCard"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
